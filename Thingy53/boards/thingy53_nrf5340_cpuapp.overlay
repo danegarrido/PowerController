@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "CDC_ACM_0";
+	};
+};
+
+// configuring the twi port
+&pinctrl {
+	i2c1_exp: i2c1_exp {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 5)>,                //P0.5 -> SDA EXP_BOARD (Blue)
+			<NRF_PSEL(TWIM_SCL, 0, 4)>;                        //P0.4 -> SCL EXP_BOARD (Yellow)
+		};
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	pinctrl-0 = <&i2c1_exp>;
+
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+
+	mysensor: mysensor@9a {
+		compatible = "i2c-device";
+		reg = <0x9a>;
+		label = "MYSENSOR";
+	};
+};
